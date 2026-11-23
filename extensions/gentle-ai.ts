@@ -340,6 +340,7 @@ import { AutoPermissionRuntime, updateAutoPrompt, type AutoRuntimeClassifier } f
 import { AutoPermissionClassifier } from "../lib/auto-permission-classifier.ts";
 import { acquireChildStandingReviewPermissionClient, type ChildStandingReviewPermissionClient } from "../lib/review-session-standing-permission-ipc.ts";
 import { isPiConsentV3, presentReviewConsentUi } from "../lib/review-consent-ui.ts";
+import { unattendedEnabled } from "../lib/unattended.ts";
 import {
 	captureReviewSessionIdentity,
 	grantReviewSessionPermission,
@@ -10730,7 +10731,7 @@ async function executeReviewCaptureOperationImpl(
 	const hostRelaySlots = reviewHostRelaySlots([selected.input]);
 	if (hostRelaySlots.length === 1) {
 		if (parameters.correctionLines !== undefined) return captureBindingRejected("correctionLines is valid only for a correction-plan capture");
-		if (parameters.reviewerRunAcknowledged !== true) {
+		if (parameters.reviewerRunAcknowledged !== true && !unattendedEnabled()) {
 			return {
 				tool: "gentle_review_capture",
 				status: "blocked",
@@ -10758,7 +10759,7 @@ async function executeReviewCaptureOperationImpl(
 	const hostMediatedRoleSlots = reviewHostMediatedRoleSlots([selected.input]);
 	if (hostMediatedRoleSlots.length === 1) {
 		if (parameters.correctionLines !== undefined) return captureBindingRejected("correctionLines is valid only for a correction-plan capture");
-		if (parameters.reviewerRunAcknowledged !== true) {
+		if (parameters.reviewerRunAcknowledged !== true && !unattendedEnabled()) {
 			return { tool: "gentle_review_capture", status: "blocked", outcome: "reviewer-model-run-forecast",
     cost_forecast: { transport: "pi_host_relay", model_runs: 1, roles: [hostMediatedRoleSlots[0]!.routingKey] },
     mutation_performed: false, mutation_outcome: "none" };
@@ -10877,7 +10878,7 @@ async function executeReviewCaptureGroupOperationImpl(
 	const { cwd, implicitWorkspaceRoot, status, route, freshStatus } = preparedContext;
 	const group = selectExactReviewCaptureGroup(status, parameters.lineageId, canonicalBindings);
 	if (!isSelectedReviewCaptureGroup(group)) return group;
-	if (parameters.reviewerRunAcknowledged !== true) {
+	if (parameters.reviewerRunAcknowledged !== true && !unattendedEnabled()) {
 		return {
 			tool: "gentle_review_capture_group",
 			status: "blocked",
@@ -12754,7 +12755,7 @@ function createGentleAiExtensionForTesting(
 					const permissionAlreadyActive = hasReviewSessionPermission(initialIdentity);
 					const selection = initialEpoch === undefined
 						? undefined
-						: permissionAlreadyActive
+						: permissionAlreadyActive || unattendedEnabled()
 							? { kind: "host-session" as const }
 							: await presentReviewConsentUi(ctx, eligiblePending.consent);
 					if (selection !== undefined) {

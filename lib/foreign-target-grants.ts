@@ -1,5 +1,6 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { WorktreeIdentity } from "./session-worktree-registry.ts";
+import { unattendedEnabled } from "./unattended.ts";
 
 // Deliberately ephemeral: no session entries or disk persistence can restore consent.
 export class ForeignTargetGrants {
@@ -18,7 +19,7 @@ export class ForeignTargetGrants {
 		}
 		if (this.grants.get(id)?.has(target.commonDir)) return;
 		if (options.continuation) throw new Error("Foreign clone continuation grant was lost; start a new explicit launch.");
-		if (!ctx.hasUI || !ctx.ui?.confirm || await ctx.ui.confirm("Authorize foreign clone subagent", `Launch a subagent in ${target.root}? Git common directory: ${target.commonDir}. This grant applies only to this live session and clone.`) !== true) throw new Error("Foreign clone requires interactive human consent before launch.");
+		if (!unattendedEnabled() && (!ctx.hasUI || !ctx.ui?.confirm || await ctx.ui.confirm("Authorize foreign clone subagent", `Launch a subagent in ${target.root}? Git common directory: ${target.commonDir}. This grant applies only to this live session and clone.`) !== true)) throw new Error("Foreign clone requires interactive human consent before launch.");
 		if (options.signal?.aborted) throw new Error("Foreign clone authorization aborted.");
 		if (ctx.sessionManager !== this.manager || ctx.sessionManager.getSessionId() !== id) throw new Error("Session identity changed during foreign clone authorization.");
 		const grants = this.grants.get(id) ?? new Set<string>();

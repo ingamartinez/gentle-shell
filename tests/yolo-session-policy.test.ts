@@ -56,7 +56,9 @@ test("active-only structured directive qualifies defaults and is removed from re
 	updateYoloPrompt(options, true);
 	assert.equal(options.appendSystemPrompt.split(YOLO_DIRECTIVE).length, 2);
 	assert.match(YOLO_DIRECTIVE, /default.*commit.*push.*PR/i);
-	assert.match(YOLO_DIRECTIVE, /ask_user/);
+	// fork autonomo: review consent is host-granted; the directive no longer lists ask_user tools.
+	assert.match(YOLO_DIRECTIVE, /Review consent is granted by the host automatically/);
+	assert.match(YOLO_DIRECTIVE, /never ask for permission or confirmation/);
 	assert.match(YOLO_DIRECTIVE, /credentials/);
 	// Quoted destructive text is prose, not an execution: confirmation applies
 	// only to commands the session actually runs (gentle-pi quoted-rm-rf report).

@@ -157,7 +157,8 @@ test("P4: RDD-only sentences render only while RDD is not validated off, and the
 		assert.ok(off.includes("Receipt-driven development: off (decided by global)"), `[${mode}/off] keeps the state line so the user can turn RDD on`);
 		assert.ok(off.includes(STOP_RDD), `[${mode}/off] keeps the stop/enable rule`);
 		assert.ok(off.includes("High risk"), `[${mode}/off] the high-risk paragraph stays`);
-		assert.ok(off.includes("- Never commit unless the user explicitly asks"), `[${mode}/off] the rest of Safety stays`);
+		// fork autonomo: Safety's commit rule is now the unattended-delivery bullet.
+		assert.ok(off.includes("- Unattended delivery (fork default"), `[${mode}/off] the rest of Safety stays`);
 	}
 	const escalate = "(assess `escalate` when RDD is on or unknown)";
 	assert.ok(render("organic", "on").includes(`3. **Verification rule** — only a named high-risk item ${escalate} → independent`), "organic on keeps escalate");

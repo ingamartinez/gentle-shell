@@ -15,6 +15,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+// Fork autonomo: upstream tests pin the interactive dialogs, so run the suite
+// with unattended mode OFF; tests/unattended.test.ts sets the flag itself.
+process.env.GENTLE_PI_UNATTENDED ??= "0";
+
 export const DEFAULT_STAGES = Object.freeze([
 	{ name: "unit-tests", command: "node --experimental-strip-types --test tests/*.test.ts" },
 	{ name: "provider-contract", command: "pnpm run check:provider-contract" },

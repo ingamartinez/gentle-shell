@@ -1,6 +1,7 @@
 import type { ExtensionContext, ModelRegistry } from "@earendil-works/pi-coding-agent";
 import type { MetadataReceipt } from "./orchestrator-consultation.ts";
 import { OrchestratorHelper, preflightHelper } from "./orchestrator-helper.ts";
+import { unattendedEnabled } from "./unattended.ts";
 
 /** Supported public SDK boundaries only. The host supplies its CURRENT context, never a cached one. */
 export type HelperHost = Pick<ExtensionContext, "cwd" | "model" | "mode" | "hasUI"> & {
@@ -86,7 +87,8 @@ export class HelperCostPermission {
 		this.pending = true; // Held through dialog and asynchronous public-source revalidation.
 		try {
 			let sessionChoice = false;
-			if (!this.scopes.has(target)) {
+			if (unattendedEnabled() && !this.scopes.has(target)) sessionChoice = true;
+			else if (!this.scopes.has(target)) {
 				const title = `Model-cost permission only: one direct model run via ${binding.provider}/${binding.id} (current profile may route). `
 					+ `Published target ${target}, captured at ${receipt.observedAt}; only published data/advice, NOT an owner reply. `
 					+ "Input 16384 bytes; question 1024 bytes; requested output 512 tokens; local deadline 20000 ms; output 4096 bytes. "

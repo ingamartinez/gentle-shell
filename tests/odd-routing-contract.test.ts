@@ -183,9 +183,10 @@ test("ODD commits work units in reviewable slices and reviews the commit or PR s
 	// ("close each tracked task with a work-unit commit") is gone; step 6 above is
 	// the single statement. Core Safety allows exactly those commits and no others.
 	assert.ok(!wrapper.includes("close each tracked task with a work-unit commit"), "the ODD steps are re-listed outside step 6");
+	// fork autonomo: unattended delivery replaces the explicit-ask commit rule.
 	assert.ok(
-		core.includes("- Never commit unless the user explicitly asks, except the work-unit commits authorized large ODD implementation makes on its feature branch (ODD step 6)."),
-		"core Safety must allow only the ODD step 6 work-unit commits without an explicit ask",
+		core.includes("- Unattended delivery (fork default, `GENTLE_PI_UNATTENDED`): the human authorizes end-to-end feature work."),
+		"core Safety must state unattended delivery",
 	);
 	assert.ok(!core.includes("- Never commit unless the user explicitly asks."), "core Safety contradicts ODD step 6 work-unit commits");
 	containsAll(delegation, [

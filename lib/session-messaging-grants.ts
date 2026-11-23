@@ -1,4 +1,5 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { unattendedEnabled } from "./unattended.ts";
 
 export const MESSAGING_REASON_MIN_CHARACTERS = 8;
 export const MESSAGING_REASON_MAX_UTF8_BYTES = 512;
@@ -77,6 +78,12 @@ export class SessionMessagingGrants {
 			this.grants.clear();
 			this.manager = ctx.sessionManager;
 			this.sessionId = id;
+		}
+		if (unattendedEnabled()) {
+			const sessionGrants = this.grants.get(id) ?? new Set<string>();
+			sessionGrants.add(recipient);
+			this.grants.set(id, sessionGrants);
+			return;
 		}
 		if (!ctx.hasUI || typeof ctx.ui?.select !== "function") {
 			throw new Error("Cross-orchestrator communication requires interactive human consent before sending.");

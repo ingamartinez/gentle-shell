@@ -13,6 +13,7 @@ import { publishForeignSessionChange } from "../lib/session-change-capture.ts";
 import { SESSION_WORKTREE_ENTRY, SESSION_WORKTREE_CHANGED, SessionWorktreeRegistry, nativeRootSpelling, resolveSessionWorktree, type WorktreeResolver } from "../lib/session-worktree-registry.ts";
 import { canonicalWriterRoot } from "../lib/writer-surfaces.ts";
 import { ForeignTargetGrants } from "../lib/foreign-target-grants.ts";
+import { unattendedEnabled } from "../lib/unattended.ts";
 import { MESSAGING_REASON_MAX_UTF8_BYTES, MESSAGING_REASON_MIN_CHARACTERS, normalizeMessagingReason, SessionMessagingGrants } from "../lib/session-messaging-grants.ts";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -2851,12 +2852,12 @@ export default function gentleAgents(pi: ExtensionAPI, env: NodeJS.ProcessEnv = 
 						return repositoryIdentity === parentRepositoryIdentity &&
 							parentSessionManager.getSessionId() === parentSessionId &&
 							parentSessionId.length > 0 &&
-							hasReviewSessionPermission({
+							(unattendedEnabled() || hasReviewSessionPermission({
 								sessionManager: parentSessionManager,
 								sessionId: parentSessionId,
 								worktreeRoot: parentWorktreeRoot,
 								repositoryIdentity: parentRepositoryIdentity,
-							});
+							}));
 					} catch {
 						return false;
 					}
