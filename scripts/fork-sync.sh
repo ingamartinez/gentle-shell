@@ -21,6 +21,9 @@ if ! git merge --no-edit "$tag"; then
 fi
 
 pnpm install --frozen-lockfile --ignore-scripts
+# Package-local gentle-ai binary (normally the npm postinstall): downloads the
+# release asset for the new version and verifies its checksum.
+node scripts/install-gentle-ai.mjs
 GENTLE_PI_UNATTENDED=0 node --experimental-strip-types --test \
 	tests/unattended.test.ts tests/yolo-session-policy.test.ts \
 	tests/odd-routing-contract.test.ts tests/always-on-prompt-verdicts-contract.test.ts \
