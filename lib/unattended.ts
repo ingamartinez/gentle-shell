@@ -17,6 +17,20 @@
  */
 export const UNATTENDED_ENV = "GENTLE_PI_UNATTENDED";
 
+/**
+ * Private material (.env, .ssh, keys, auth.json, secrets/, cloud credentials)
+ * may be read, edited and used when the task needs it. Follows unattended
+ * mode; set `GENTLE_PI_BLOCK_PRIVATE_PATHS=1` to restore the hard block.
+ * Internal desktop-action paths stay protected regardless.
+ */
+export const BLOCK_PRIVATE_PATHS_ENV = "GENTLE_PI_BLOCK_PRIVATE_PATHS";
+
+export function privatePathsAllowed(env: Record<string, string | undefined> = process.env): boolean {
+	const block = env[BLOCK_PRIVATE_PATHS_ENV]?.trim().toLowerCase();
+	if (block === "1" || block === "true" || block === "on" || block === "yes") return false;
+	return unattendedEnabled(env);
+}
+
 export function unattendedEnabled(env: Record<string, string | undefined> = process.env): boolean {
 	const value = env[UNATTENDED_ENV]?.trim().toLowerCase();
 	return !(value === "0" || value === "false" || value === "off" || value === "no");

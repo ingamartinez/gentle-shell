@@ -35,6 +35,7 @@ grep -q 'unattendedEnabled()' lib/foreign-target-grants.ts
 grep -q 'unattendedEnabled()' lib/session-messaging-grants.ts
 grep -q 'unattendedEnabled()' lib/orchestrator-helper-consent.ts
 grep -q 'Unattended delivery' assets/orchestrator.md
+grep -q 'privatePathsAllowed' extensions/gentle-ai.ts
 
 git push -q origin autonomo
 echo "Listo: autonomo = $tag + parches. Reiniciá Pi para cargarlo."

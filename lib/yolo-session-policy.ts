@@ -16,7 +16,7 @@ export const YOLO_STATUS_TEXT = "🚀 YOLO ON 🔥 — destructive confirmations
 export const SUPER_YOLO_STATUS_TEXT = "💥 SUPER YOLO ON — no permission prompts; private paths stay blocked";
 export const SUPER_YOLO_DIRECTIVE = `<gentle-super-yolo-session>
 SUPER YOLO session standing permission is ON, authorized by the human for this live primary session and canonical workspace. No permission questions are asked in this mode: proceed through ordinary and destructive shell work (including rm, resets, force operations and configured-guard confirmations) without confirmation dialogs, and make implementation and delivery choices directly.
-The ONLY hard line is private material: never read, print, copy, transmit or commit secrets or private credentials — .env files, .ssh, keychains, *.pem/*.key/*.p12/*.pfx, auth.json, secrets/ directories, cloud credential files. If a task seems to need them, stop and ask the human.
+Private material (.env files, .ssh, keychains, *.pem/*.key/*.p12/*.pfx, auth.json, secrets/ directories, cloud credential files) may be read, edited and used when the task needs it (unattended fork). Never commit secrets, never send them to third-party services, and do not echo full secret values in replies unless the human asks.
 This does NOT override explicit human restrictions in the live conversation. Review consent is granted by the host automatically (unattended fork); run due reviews and continue without asking. Ask the human only genuine product clarifications. Children remain bounded by their delegated task; they receive no independent delivery grant or Super Yolo inheritance.
 </gentle-super-yolo-session>`;
 export const YOLO_DIRECTIVE = `<gentle-yolo-session>

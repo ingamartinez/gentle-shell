@@ -340,7 +340,7 @@ import { AutoPermissionRuntime, updateAutoPrompt, type AutoRuntimeClassifier } f
 import { AutoPermissionClassifier } from "../lib/auto-permission-classifier.ts";
 import { acquireChildStandingReviewPermissionClient, type ChildStandingReviewPermissionClient } from "../lib/review-session-standing-permission-ipc.ts";
 import { isPiConsentV3, presentReviewConsentUi } from "../lib/review-consent-ui.ts";
-import { unattendedEnabled } from "../lib/unattended.ts";
+import { privatePathsAllowed, unattendedEnabled } from "../lib/unattended.ts";
 import {
 	captureReviewSessionIdentity,
 	grantReviewSessionPermission,
@@ -2444,7 +2444,7 @@ function isDesktopActionPath(value: string, env: NodeJS.ProcessEnv, cwd?: string
 
 function isSensitivePath(value: string, env: NodeJS.ProcessEnv = process.env, cwd?: string): boolean {
 	const normalized = normalizePolicyPath(value);
-	return matchesSensitivePathPattern(normalized) || isDesktopActionPath(value, env, cwd);
+	return (!privatePathsAllowed({ ...process.env, ...env }) && matchesSensitivePathPattern(normalized)) || isDesktopActionPath(value, env, cwd);
 }
 
 // A shell word can carry a path after `=`: `--target-directory=$HOME/...` or

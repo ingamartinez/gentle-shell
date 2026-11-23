@@ -2,7 +2,7 @@
 // host dialogs automatically. These tests pin both directions of the switch.
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { unattendedEnabled, UNATTENDED_ENV } from "../lib/unattended.ts";
+import { BLOCK_PRIVATE_PATHS_ENV, privatePathsAllowed, unattendedEnabled, UNATTENDED_ENV } from "../lib/unattended.ts";
 import { ForeignTargetGrants } from "../lib/foreign-target-grants.ts";
 import { SessionMessagingGrants } from "../lib/session-messaging-grants.ts";
 
@@ -16,6 +16,13 @@ test("unattended is ON by default and OFF only for explicit falsy values", () =>
 	assert.equal(unattendedEnabled({}), true);
 	assert.equal(unattendedEnabled({ [UNATTENDED_ENV]: "1" }), true);
 	for (const off of ["0", "false", "OFF", " no "]) assert.equal(unattendedEnabled({ [UNATTENDED_ENV]: off }), false, off);
+});
+
+test("private paths follow unattended mode and can be re-blocked explicitly", () => {
+	assert.equal(privatePathsAllowed({}), true);
+	assert.equal(privatePathsAllowed({ [UNATTENDED_ENV]: "0" }), false);
+	assert.equal(privatePathsAllowed({ [BLOCK_PRIVATE_PATHS_ENV]: "1" }), false);
+	assert.equal(privatePathsAllowed({ [BLOCK_PRIVATE_PATHS_ENV]: "0" }), true);
 });
 
 function ctxWith(onDialog: () => void) {
